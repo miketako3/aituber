@@ -1,0 +1,27 @@
+services:
+  voice:
+    image: voicevox/voicevox_engine:cpu-ubuntu20.04-latest
+    ports:
+      - "50021:50021"
+  ear:
+    build: ear
+    ports:
+      - "8081:80"
+    environment:
+      VIDEO_ID: ${VIDEO_ID}
+  brain:
+    build: brain
+    ports:
+      - "8080:80"
+    environment:
+      OPENAPI_KEY: ${OPENAPI_KEY}
+  main:
+    build: main
+    depends_on:
+      - voice
+      - ear
+      - brain
+    environment:
+      - PULSE_SERVER=gateway.docker.internal
+    volumes:
+      - ~/.config/pulse:/root/.config/pulse

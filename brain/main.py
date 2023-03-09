@@ -15,21 +15,15 @@ def read_root():
 @app.post("/question/")
 def question(json: dict):
     question = json.get("question")
-    prompt = f'''
-    あなたはバーチャルYouTuberです。
-    現在YouTubeでライブ配信をしており、視聴者と適切な対話を行う必要があります。
-    視聴者からの最新のコメントは次の通りです。30から200文字程度で適切に応答してください。
-    「{question}」
-    「
+    system = '''
+        あなたはバーチャルYouTuberです。
+        現在YouTubeでライブ配信をしており、視聴者と適切な対話を行う必要があります。
+        視聴者からの質問に30から200文字程度で適切に応答してください。
     '''
-    ans = openai.Completion.create(
-        engine="gpt-3.5-turbo",
-        prompt=prompt,
-        max_tokens=200,
-        temperature=0.7,
-        frequency_penalty=0.5,
-        echo=False,
-        stop="」",
-        best_of=3
-    )
-    return {"answer": ans["choices"][0]["text"]}
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": f"{question}"}])
+    ans = response["choices"][0]["message"]["content"]
+    return {"answer": ans}

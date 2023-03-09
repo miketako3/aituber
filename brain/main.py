@@ -23,7 +23,7 @@ def question(json: dict):
     「
     '''
     ans = openai.Completion.create(
-        engine="text-davinci-003",
+        engine="gpt-3.5-turbo",
         prompt=prompt,
         max_tokens=200,
         temperature=0.7,
